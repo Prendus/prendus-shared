@@ -72,8 +72,8 @@ export const GQLRequest = async (queryString: string, variables: { [key: string]
     const data = responseJSON.data;
     const errors = responseJSON.errors;
 
+    //TODO reconsider the errors. Potentially throw them so the client can catch them...
     (errors || []).forEach((error: any) => {
-    //   console.log('error', error)
         errorCallback(error);
     });
 
@@ -100,8 +100,3 @@ export const GQLSubscribe = (queryString: string, id: string, callback: GQLSubsc
 
     webSocket.send(JSON.stringify(message));
 };
-
-
-export function escapeString(string: string) {
-    return string.replace(/\n/g, '\\n').replace(/"/g, '\\"');
-}
