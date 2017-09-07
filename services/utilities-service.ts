@@ -1,5 +1,6 @@
 import {QuestionScaffold} from '../../prendus-question-elements/prendus-question-elements.d';
 import {QuestionScaffoldAnswer} from '../../prendus-question-elements/prendus-question-elements.d';
+import {GQLRequest} from './graphql-service';
 
 export function getGraphcoolHTTPEndpoint() {
     if (window.process.env.NODE_ENV === 'production') {
@@ -127,4 +128,87 @@ export async function asyncForEach(collection: any[], behavior: any): Promise<vo
     }
     await behavior(collection[0]);
     await asyncForEach(collection.slice(1), behavior);
+}
+
+async function isUserOnCourse(userId: string, userToken: string, assignmentId: string) {
+    const data = await GQLRequest(`
+        query enrolled($assignmentId: ID!, $userId: ID!) {
+            Assignment(
+                id: $assignmentId
+            ) {
+                course{
+                  author{
+                    id
+                  }
+                  enrolledStudents(
+                      filter: {
+                          id: $userId
+                      }
+                  ) {
+                      id
+                  }
+                }
+            }
+        }
+    `, {assignmentId, userId}, userToken, (error: any) => { console.log(error); });
+    return !!(data.Assignment.course.enrolledStudents[0] || (data.Assignment.course.author.id === userId));
+}
+
+async function hasUserPaidForCourse(userId: string, userToken: string, assignmentId: string, courseId: string) {
+    const data = await GQLRequest(`
+        query hasPaid($assignmentId: ID!, $userId: ID!) {
+            Assignment(
+                id: $assignmentId
+            ) {
+                course{
+                  author{
+                    id
+                  }
+                  purchases(
+                      filter: {
+                          AND: [{
+                                  user: {
+                                      id: $userId
+                                  }
+                              }, {
+                                  isPaid: true
+                              }
+                          ]
+                      }
+                  ) {
+                      id
+                  }
+                }
+            }
+        }
+    `, {assignmentId, userId}, userToken, (error: any) => {});
+    return !!(data.Assignment.course.purchases[0] || (data.Assignment.course.author.id === userId));
+}
+
+export async function getCourseIdFromAssignmentId(assignmentId: string, userToken: string) {
+    const data = await GQLRequest(`
+        query getCourseId($id: ID!) {
+            Assignment(id: $id) {
+                id
+                course {
+                    id
+                }
+            }
+        }
+      `,
+      {id: assignmentId},
+      userToken,
+      (error: any) => { console.log(error); }
+    );
+
+    return data.Assignment.course.id;
+}
+
+export async function isUserAuthorizedOnCourse(userId: string, userToken: string, assignmentId: string, courseId: string): Promise<{ userOnCourse: boolean, userPaidForCourse: boolean }> {
+    const userOnCourse = await isUserOnCourse(userId, this.userToken, assignmentId);
+    const userPaidForCourse = await hasUserPaidForCourse(userId, userToken, assignmentId, courseId);
+    return {
+        userOnCourse,
+        userPaidForCourse
+    };
 }
