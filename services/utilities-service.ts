@@ -212,3 +212,12 @@ export async function isUserAuthorizedOnCourse(userId: string, userToken: string
         userPaidForCourse
     };
 }
+
+export function fireLocalAction(componentId: string, key: string, value: any) {
+    return {
+        type: 'SET_COMPONENT_PROPERTY',
+        componentId,
+        key,
+        value
+    };
+}
