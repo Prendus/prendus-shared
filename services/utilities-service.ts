@@ -170,8 +170,6 @@ async function hasUserPaidForCourse(userId: string, userToken: string, assignmen
                                   user: {
                                       id: $userId
                                   }
-                              }, {
-                                  isPaid: true
                               }
                           ]
                       }
