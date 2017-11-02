@@ -130,6 +130,18 @@ export async function asyncForEach(collection: any[], behavior: any): Promise<vo
     await asyncForEach(collection.slice(1), behavior);
 }
 
+export async function asyncReduce(collection: any[], behavior: any, result: any): Promise<any> {
+    return await asyncReduceRecursion(collection, behavior, result, 0);
+    async function asyncReduceRecursion(collection: any[], behavior: any, result: any, index: number): Promise<any> {
+        if (collection.length === 0) {
+            return result;
+        }
+
+        const newResult = await behavior(result, collection[0], index);
+        return await asyncReduceRecursion(collection.slice(1), behavior, newResult, index + 1);
+    }
+}
+
 async function isUserOnCourse(userId: string, userToken: string, assignmentId: string) {
     const data = await GQLRequest(`
         query enrolled($assignmentId: ID!, $userId: ID!) {
