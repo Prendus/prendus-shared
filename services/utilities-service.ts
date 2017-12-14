@@ -7,7 +7,7 @@ export function getGraphcoolHTTPEndpoint() {
         return 'https://api.graph.cool/simple/v1/cj48qaw2u6uyd01411y8gj8fr';
     }
     else {
-        return 'https://api.graph.cool/simple/v1/cj36de9q4dem00134bhkwm44r';
+        return 'https://api.graph.cool/simple/v1/cj8dlzxgn0oyr0144574u2ivb';
     }
 }
 
@@ -16,7 +16,7 @@ export function getGraphcoolWebSocketEndpoint() {
         return 'wss://subscriptions.us-west-2.graph.cool/v1/cj48qaw2u6uyd01411y8gj8fr';
     }
     else {
-        return 'wss://subscriptions.graph.cool/v1/cj36de9q4dem00134bhkwm44r';
+        return 'wss://subscriptions.graph.cool/v1/cj8dlzxgn0oyr0144574u2ivb';
     }
 }
 
