@@ -107,7 +107,8 @@ export function getCookie(name: string) {
 
 //TODO put this into redux somehow. Manage all cookies from Redux.
 export function deleteCookie(name: string) {
-    document.cookie = `${name}=; Max-Age=0; path=/`;
+    //TODO I am not sure if the domain will work on localhost for testing
+    document.cookie = `${name}=; Max-Age=0; path=/; domain=${window.location.hostname.replace('www', '')}`;
 }
 
 export async function asyncMap(collection: any[], behavior: any): Promise<any[]> {
